@@ -41,11 +41,14 @@ jobs:
     - name: Create .env file
       run: |
         echo "IMAGEMAGICK_BINARY=magick.exe" > .env
+        echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+        echo "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}" >> .env
+        echo "YOUTUBE_TOKEN=${{ secrets.YOUTUBE_TOKEN }}" >> .env
     
     - name: Run content generation script
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
-        IMAGE_MAGICK_PATH: magick.exe
+        YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
       run: |
         python main.py
