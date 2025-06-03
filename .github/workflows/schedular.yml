@@ -1,6 +1,8 @@
 name: Daily Content Generation
-
 on:
+  push:
+    branches:
+      - master
   schedule:
     - cron: '0 0 * * *'  # Runs at 00:00 UTC every day
     - cron: '0 12 * * *' # Runs at 12:00 UTC every day
@@ -19,17 +21,19 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.10.8'
-    
-    - name: Install ImageMagick
-      run: |
-        choco install imagemagick.app -y
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install torch==2.2.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
         pip install instagrapi
+        pip install Pillow>=8.1.1
+    
+    - name: Install ImageMagick
+      run: |
+        choco install imagemagick.app -y
+        
         
     - name: Create .env file
       run: |
