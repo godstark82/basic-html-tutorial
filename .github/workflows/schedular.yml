@@ -41,7 +41,7 @@ jobs:
         
     - name: Create .env file
       run: |
-        echo "IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16\magick.exe" > .env
+        echo "IMAGEMAGICK_BINARY=C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe" > .env
         echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
         echo "GEMINI_MODEL=${{ secrets.GEMINI_MODEL }}" >> .env
         echo "YOUTUBE_TOKEN=${{ secrets.YOUTUBE_TOKEN }}" >> .env
@@ -51,5 +51,6 @@ jobs:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
         YOUTUBE_TOKEN: ${{ secrets.YOUTUBE_TOKEN }}
+        IMAGEMAGICK_BINARY: C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe
       run: |
         python main.py
