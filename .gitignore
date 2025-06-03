@@ -1,0 +1,11 @@
+.venv/
+.env
+__pycache__/
+.mp4
+generated_script.json
+generated_topic.txt
+client_secrets.json
+youtube_token.json
+
+generated/
+samples/video.mp4
