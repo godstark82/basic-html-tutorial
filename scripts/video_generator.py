@@ -61,7 +61,7 @@ def generate_video(
         # Style for Walter's subtitles
         walter_style = {
             'font': 'Arial-Bold',
-            'fontsize': 80,  # Increased font size for higher resolution
+            'fontsize': 85,  # Increased font size for higher resolution
             'color': 'white',
             'stroke_color': 'black',
             'stroke_width': 4,  # Increased stroke width for better visibility
@@ -73,7 +73,7 @@ def generate_video(
         # Style for Jesse's subtitles
         jesse_style = {
             'font': 'Arial-Bold', 
-            'fontsize': 80,  # Increased font size for higher resolution
+            'fontsize': 85,  # Increased font size for higher resolution
             'color': 'yellow',
             'stroke_color': 'black',
             'stroke_width': 4,  # Increased stroke width for better visibility
