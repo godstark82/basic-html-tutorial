@@ -29,7 +29,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install torch==2.2.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
-        pip install instagramapi
+        pip install instagrapi
         
     - name: Create .env file
       run: |
