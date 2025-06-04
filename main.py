@@ -43,25 +43,20 @@ def run_workflow(start_task: int = 1) -> dict:
         if start_task <= 2:
             logging.info("Generating script...")
             script = generate_script(result["topic"])
-            save_script(script, result["script_path"])
+            save_script(script)
             logging.info(f"Script saved to {result['script_path']}")
         
         # Step 3: Generate voiceover
         if start_task <= 3:
             logging.info("Generating voiceover...")
-            audio_file = generate_voiceover(result["script_path"], result["audio_path"])
+            audio_file = generate_voiceover()
             result["audio_path"] = audio_file
             logging.info(f"Voiceover saved to {audio_file}")
         
         # Step 4: Generate video
         if start_task <= 4:
             logging.info("Generating video...")
-            video_file = generate_video(
-                background_video="samples/video.mp4",
-                audio_file=result["audio_path"],
-                script_file=result["script_path"],
-                output_path=result["video_path"]
-            )
+            video_file = generate_video()
             result["video_path"] = video_file
             logging.info(f"Video saved to {video_file}")
         

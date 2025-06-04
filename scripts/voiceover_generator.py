@@ -7,19 +7,19 @@ from outetts.models import hf_model
 from scripts.config import *
 
 
-def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.mp3") -> str:
+def generate_voiceover() -> str:
     """
     Generate voiceovers for characters using Outetts and combine them into a single audio file.
     Each dialogue is generated and stored separately, then combined in sequence.
     Returns the path to the combined audio file.
     """
     try:
-        # Create output directories if they don't exist
-        os.makedirs("generated/audios", exist_ok=True)
+        script_path = 'generated/scripts/generated_script.json'
+        audios_path = 'generated/audios'
         
         # remove everything inside generated/audios
-        for file in os.listdir("generated/audios"):
-            os.remove(os.path.join("generated/audios", file))
+        for file in os.listdir(audios_path):
+            os.remove(os.path.join(audios_path, file))
         
         # Initialize Outetts
         interface = outetts.Interface(
@@ -73,7 +73,7 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
             )
             
             # Save individual audio file
-            individual_file = f"generated/audios/{key}_{character}.wav"
+            individual_file = f"{audios_path}/{key}_{character}.wav"
             audio.save(individual_file)
             print(f"Saved individual audio to {individual_file}")
             
@@ -87,10 +87,10 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
             combined += segment
         
         # Export the combined audio
-        combined.export(output_path, format="mp3")
-        print(f"Combined voiceover saved to {output_path}")
+        combined.export('generated/audios/combined_voiceover.mp3', format="mp3")
+        print(f"Combined voiceover saved to generated/audios/combined_voiceover.mp3")
         
-        return output_path
+        return 'generated/audios/combined_voiceover.mp3'
             
     except Exception as e:
         print(f"Voiceover generation failed: {str(e)}")
@@ -98,7 +98,7 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
 
 if __name__ == "__main__":
     try:
-        output_file = generate_voiceover("./generated/scripts/generated_script.json")
+        output_file = generate_voiceover()
         print(f"Voiceover generated successfully: {output_file}")
     except Exception as e:
         print(f"Voiceover generation failed: {str(e)}")

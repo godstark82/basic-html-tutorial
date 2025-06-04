@@ -11,7 +11,6 @@ YOUTUBE_SETTINGS = {
 
 # Character Settings
 CHARACTERS = {
-    
     "character1": {
         "name": "walter",
         "image_path": "samples/images/walter.png",  
@@ -37,7 +36,10 @@ CONTENT_NOTES = {
     "main_topic": "FullStack Development",  
     "subtopics": ["Frontend Development", "Backend Development", "Database Development", "DevOps"],  
     "key_points": ["Frontend Development", "Backend Development", "Database Development", "DevOps"], 
-    "special_instructions": "The script should be funny and humorous in walter white and jesse pinkman style from breaking bad series",
+    "special_instructions": """
+    The script should be funny and humorous in walter white and jesse pinkman style from breaking bad series
+    The script should be in english
+    """,
     "references": [],  
 }
 

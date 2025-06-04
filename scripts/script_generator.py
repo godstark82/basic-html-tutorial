@@ -1,7 +1,6 @@
 from google import genai
 import os
 import json
-import sys
 from pathlib import Path
 
 from scripts.config import *
@@ -87,13 +86,12 @@ def generate_script(topic: str) -> dict:
         print(f"Script generation failed: {str(e)}")
         raise
 
-def save_script(script: dict, output_path: str = "generated_script.json") -> None:
+def save_script(script: dict) -> None:
     """
     Save the generated script to a JSON file.
     """
     try:
-        os.makedirs('generated/scripts', exist_ok=True)
-        output_path = os.path.join('generated/scripts', output_path)
+        output_path = os.path.join('generated/scripts', 'generated_script.json')
         with open(output_path, 'w') as f:
             json.dump(script, f, indent=4)
         print(f"Script saved to {output_path}")

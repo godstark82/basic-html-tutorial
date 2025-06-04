@@ -17,16 +17,15 @@ if not IMAGE_MAGICK_PATH:
 moviepy.config.IMAGEMAGICK_BINARY = IMAGE_MAGICK_PATH
 
 
-def generate_video(
-    audio_file: str, 
-    script_file: str,
-    output_path: str = "final_video.mp4"
-) -> str:
+def generate_video() -> str:
     """
     Generate a vertical video with background footage, audio, subtitles and character images.
     Returns the path to the generated video.
     """
     background_video_url = config.YOUTUBE_SETTINGS['background_video_url']
+    audio_file = 'generated/audios/combined_voiceover.mp3'
+    script_file = 'generated/scripts/generated_script.json'
+    output_path = 'final_video.mp4'
     try:
         download_sample_video(background_video_url)
         
@@ -164,10 +163,7 @@ def generate_video(
 
 if __name__ == "__main__":
     try:
-        output_file = generate_video(
-            audio_file="combined_voiceover.mp3",
-            script_file="test_script.json"
-        )
+        output_file = generate_video()
         print(f"Video generated successfully: {output_file}")
     except Exception as e:
         print(f"Video generation failed: {str(e)}")
