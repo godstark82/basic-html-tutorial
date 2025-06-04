@@ -29,7 +29,7 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
                 interface_version=outetts.InterfaceVersion.V3,
                 backend=outetts.Backend.HF,
                 quantization=outetts.LlamaCppQuantization.FP16,
-                device="cuda",
+                device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
                 dtype=torch.bfloat16
             )
         )
