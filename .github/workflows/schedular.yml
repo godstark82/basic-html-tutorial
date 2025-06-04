@@ -40,6 +40,7 @@ jobs:
         pip install googleapis-common-protos==1.70.0
         pip install gTTS==2.5.4
         pip install pytube
+        pip install firebase-admin
     
     - name: Install ImageMagick and FFmpeg
       run: |
