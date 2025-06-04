@@ -39,6 +39,7 @@ jobs:
         pip install google-generativeai==0.8.5
         pip install googleapis-common-protos==1.70.0
         pip install gTTS==2.5.4
+        pip install pytube
     
     - name: Install ImageMagick and FFmpeg
       run: |
