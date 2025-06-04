@@ -41,14 +41,8 @@ CONTENT_NOTES = {
     "references": [],  
 }
 
-# Output Settings
-OUTPUT_SETTINGS = {
-    "output_directory": "generated",
-}
-
 GLOBAL_CONFIG = {
     "YOUTUBE_SETTINGS": YOUTUBE_SETTINGS,
     "CHARACTERS": CHARACTERS,
     "SCRIPT_SETTINGS": SCRIPT_SETTINGS,
-    "OUTPUT_SETTINGS": OUTPUT_SETTINGS,
 }

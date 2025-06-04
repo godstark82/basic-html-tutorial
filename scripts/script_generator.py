@@ -92,8 +92,8 @@ def save_script(script: dict, output_path: str = "generated_script.json") -> Non
     Save the generated script to a JSON file.
     """
     try:
-        os.makedirs(OUTPUT_SETTINGS['output_directory'], exist_ok=True)
-        output_path = os.path.join(OUTPUT_SETTINGS['output_directory'], output_path)
+        os.makedirs('generated/scripts', exist_ok=True)
+        output_path = os.path.join('generated/scripts', output_path)
         with open(output_path, 'w') as f:
             json.dump(script, f, indent=4)
         print(f"Script saved to {output_path}")

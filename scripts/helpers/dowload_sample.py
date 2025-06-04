@@ -27,7 +27,6 @@ def download_sample_video(youtube_url):
         print(f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
-    # Example usage with a YouTube URL
     video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"  # Replace with your desired YouTube video URL
     download_sample_video(video_url)
 
