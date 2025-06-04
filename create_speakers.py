@@ -1,15 +1,21 @@
 import outetts
+import scripts.config as config
+import torch
 
 interface = outetts.Interface(
-            config=outetts.ModelConfig.auto_config(
-                model=outetts.Models.VERSION_1_0_SIZE_1B,
-                backend=outetts.Backend.LLAMACPP,
-                quantization=outetts.LlamaCppQuantization.FP16
+            config=outetts.ModelConfig(
+                model_path="OuteAI/Llama-OuteTTS-1.0-1B", 
+                tokenizer_path="OuteAI/Llama-OuteTTS-1.0-1B",
+                interface_version=outetts.InterfaceVersion.V3,
+                backend=outetts.Backend.HF,
+                quantization=outetts.LlamaCppQuantization.FP16,
+                device=torch.device("cuda" if torch.cuda.is_available() else "cpu"),
+                dtype=torch.bfloat16
             )
         )
 
-walter = interface.create_speaker("samples/walter.wav")
-interface.save_speaker(walter, "walter.json")
-jesse = interface.create_speaker("samples/jesse.wav")
-interface.save_speaker(jesse, "jesse.json")
+character1 = interface.create_speaker(config.CHARACTERS["character1"]["audio_json_path"])
+interface.save_speaker(character1, config.CHARACTERS["character1"]["audio_json_path"])
+character2 = interface.create_speaker(config.CHARACTERS["character2"]["audio_json_path"])
+interface.save_speaker(character2, config.CHARACTERS["character2"]["audio_json_path"])
 

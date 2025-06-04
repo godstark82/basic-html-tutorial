@@ -1,7 +1,6 @@
 from google import genai
 import os
 import json
-from error_handler import handle_errors, logging
 
 # Configure Gemini API
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -14,13 +13,13 @@ if not GEMINI_MODEL:
 try:
     client = genai.Client(api_key=GOOGLE_API_KEY)
 except Exception as e:
-    logging.error(f"Gemini client failed: {str(e)}")
+    print(f"Gemini client failed: {str(e)}")
     raise
 
 TOPICS_FILE = "data/used_topics.json"
 GENERATED_TOPIC_FILE = "generated_topic.txt"
 
-@handle_errors("TopicGenerator")
+
 def generate_topic(user_topic: str = None) -> str:
     """
     Generate a random development topic using Gemini AI, ensuring it hasn't been used before.
@@ -38,7 +37,7 @@ def generate_topic(user_topic: str = None) -> str:
         # If user provided a topic, use it
         if user_topic:
             if user_topic in used_topics:
-                logging.warning(f"Topic '{user_topic}' has been used before")
+                print(f"Topic '{user_topic}' has been used before")
             # Save user topic to both files
             with open(GENERATED_TOPIC_FILE, 'w') as f:
                 f.write(user_topic)
@@ -76,7 +75,7 @@ def generate_topic(user_topic: str = None) -> str:
             used_topics.clear()
             with open(TOPICS_FILE, 'w') as f:
                 json.dump(list(used_topics), f)
-            logging.info("Cleared used topics due to difficulty generating new unique topic")
+            print("Cleared used topics due to difficulty generating new unique topic")
         
         # Add new topic to used topics and save to both files
         used_topics.add(topic)
@@ -87,11 +86,11 @@ def generate_topic(user_topic: str = None) -> str:
         with open(GENERATED_TOPIC_FILE, 'w') as f:
             f.write(topic)
         
-        logging.info(f"Generated new topic: {topic}")
+        print(f"Generated new topic: {topic}")
         return topic
         
     except Exception as e:
-        logging.error(f"Topic generation failed: {str(e)}")
+        print(f"Topic generation failed: {str(e)}")
         raise
 
 if __name__ == "__main__":
@@ -99,5 +98,5 @@ if __name__ == "__main__":
         topic = generate_topic()
         print(f"Generated topic: {topic}")
     except Exception as e:
-        logging.error(f"Topic generation failed: {str(e)}")
+        print(f"Topic generation failed: {str(e)}")
         raise 

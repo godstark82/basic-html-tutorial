@@ -1,7 +1,10 @@
 from google import genai
 import os
 import json
-from error_handler import handle_errors, logging
+import sys
+from pathlib import Path
+
+from scripts.config import *
 
 # Configure Gemini API
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -14,31 +17,21 @@ if not GEMINI_MODEL:
 try:
     client = genai.Client(api_key=GOOGLE_API_KEY)
 except Exception as e:
-    logging.error(f"Gemini client failed: {str(e)}")
+    print(f"Gemini client failed: {str(e)}")
     raise
 
-@handle_errors("ScriptGenerator")
+
 def generate_script(topic: str) -> dict:
     """
     Generate a script for Walter White and Jesse Pinkman discussing the given fullstack development topic.
     Returns a dictionary with numbered dialogues containing character lines.
     """
-    prompt = f"""Create a funny yet educational script about {topic} featuring Walter White and Jesse Pinkman from Breaking Bad.
-    The script should be in English and should be completed within 55-60 seconds.
+    prompt = f"""Create a {SCRIPT_SETTINGS['tone']} yet educational script about {topic}.
+    The script should be in {SCRIPT_SETTINGS['language']} and should be completed within 55-60 seconds.
+    Target audience: {SCRIPT_SETTINGS['target_audience']}
+    There should be 2 characters in the script one is {CHARACTERS['character1']['name']} and the other is {CHARACTERS['character2']['name']}.
     
-    Walter White should:
-    - Use his famous serious tone
-    - Explain technical concepts in a Heisenberg-like way
-    - Use phrases like "Jesse, listen carefully" or "Let me explain this to you"
-    - Use English technical terms but in breaking bad style
-    - Sound like a strict teacher
-    
-    Jesse Pinkman should:
-    - Start with "Yo! Mister White" or "Mister White!"
-    - Use his famous "bitch" catchphrase occasionally
-    - Show confusion and ask questions in a funny way
-    - Use more casual English mixed with breaking bad style
-    - Sound like a confused but eager student
+    {CONTENT_NOTES['special_instructions']}
     
     Format the response as a valid JSON with numbered dialogues, each containing the character's line.
     
@@ -73,7 +66,7 @@ def generate_script(topic: str) -> dict:
             try:
                 script = json.loads(cleaned_text)
             except json.JSONDecodeError as e:
-                logging.error(f"Invalid JSON response: {response.text}")
+                print(f"Invalid JSON response: {response.text}")
                 raise ValueError(f"Failed to parse script as JSON: {str(e)}")
         
         # Validate script structure
@@ -91,7 +84,7 @@ def generate_script(topic: str) -> dict:
         return script
         
     except Exception as e:
-        logging.error(f"Script generation failed: {str(e)}")
+        print(f"Script generation failed: {str(e)}")
         raise
 
 def save_script(script: dict, output_path: str = "generated_script.json") -> None:
@@ -99,18 +92,20 @@ def save_script(script: dict, output_path: str = "generated_script.json") -> Non
     Save the generated script to a JSON file.
     """
     try:
+        os.makedirs(OUTPUT_SETTINGS['output_directory'], exist_ok=True)
+        output_path = os.path.join(OUTPUT_SETTINGS['output_directory'], output_path)
         with open(output_path, 'w') as f:
             json.dump(script, f, indent=4)
-        logging.info(f"Script saved to {output_path}")
+        print(f"Script saved to {output_path}")
     except Exception as e:
-        logging.error(f"Failed to save script: {str(e)}")
+        print(f"Failed to save script: {str(e)}")
         raise
 
 if __name__ == "__main__":
     try:
-        script = generate_script("React Hooks ka Magic")
+        script = generate_script('React in Frontend Development')
         save_script(script)
         print("Script generated and saved successfully")
     except Exception as e:
-        logging.error(f"Script generation failed: {str(e)}")
+        print(f"Script generation failed: {str(e)}")
         raise 

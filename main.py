@@ -1,10 +1,8 @@
 import os
-import json
 import argparse
-from datetime import datetime
 from scripts.upload_instagram import upload_reel
 from scripts.upload_youtube import upload_short
-from error_handler import handle_errors, logging
+from scripts.error_handler import handle_errors, logging
 from scripts.topic_generator import generate_topic
 from scripts.script_generator import generate_script, save_script
 from scripts.voiceover_generator import generate_voiceover
@@ -88,7 +86,7 @@ def run_workflow(start_task: int = 1) -> dict:
             "error": str(e)
         }
 
-if __name__ == "__main__":
+def main():
     try:
         parser = argparse.ArgumentParser()
         parser.add_argument("-task", type=int, default=1, help="Task number to start from (1-6)")
@@ -110,3 +108,6 @@ if __name__ == "__main__":
     except Exception as e:
         logging.error(f"Main workflow failed: {str(e)}")
         raise
+    
+if __name__ == "__main__":
+    main()

@@ -1,15 +1,15 @@
 import os
 import outetts
 import torch
-from error_handler import handle_errors, logging
 import json
 from pydub import AudioSegment
 from outetts.models import hf_model
+from scripts.config import *
 
-@handle_errors("VoiceoverGenerator")
+
 def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.mp3") -> str:
     """
-    Generate voiceovers for Walter White and Jesse Pinkman using Outetts and combine them into a single audio file.
+    Generate voiceovers for characters using Outetts and combine them into a single audio file.
     Each dialogue is generated and stored separately, then combined in sequence.
     Returns the path to the combined audio file.
     """
@@ -35,8 +35,8 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
         )
 
         # Load speaker profiles
-        walter_speaker = interface.load_speaker("samples/walter.json")
-        jesse_speaker = interface.load_speaker("samples/jesse.json")
+        character1_speaker = interface.load_speaker(CHARACTERS["character1"]["audio_json_path"])
+        character2_speaker = interface.load_speaker(CHARACTERS["character2"]["audio_json_path"])
         
         # Read the script
         with open(script_path, 'r') as f:
@@ -54,15 +54,15 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
             
             # Determine character and get appropriate speaker
             if 'walter' in dialogue:
-                character = 'walter'
-                speaker = walter_speaker
+                character = CHARACTERS["character1"]["name"]
+                speaker = character1_speaker
                 text = dialogue['walter']
             elif 'jesse' in dialogue:
-                character = 'jesse'
-                speaker = jesse_speaker
+                character = CHARACTERS["character2"]["name"]
+                speaker = character2_speaker
                 text = dialogue['jesse']
             else:
-                raise ValueError(f"Dialogue {key} must contain either 'walter' or 'jesse'")
+                raise ValueError(f"Dialogue {key} must contain either {CHARACTERS['character1']['name']} or {CHARACTERS['character2']['name']}")
             
             # Generate audio for the line
             audio = interface.generate(
@@ -75,7 +75,7 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
             # Save individual audio file
             individual_file = f"generated/audios/{key}_{character}.wav"
             audio.save(individual_file)
-            logging.info(f"Saved individual audio to {individual_file}")
+            print(f"Saved individual audio to {individual_file}")
             
             # Load audio segment
             segment = AudioSegment.from_wav(individual_file)
@@ -88,18 +88,18 @@ def generate_voiceover(script_path: str, output_path: str = "combined_voiceover.
         
         # Export the combined audio
         combined.export(output_path, format="mp3")
-        logging.info(f"Combined voiceover saved to {output_path}")
+        print(f"Combined voiceover saved to {output_path}")
         
         return output_path
             
     except Exception as e:
-        logging.error(f"Voiceover generation failed: {str(e)}")
+        print(f"Voiceover generation failed: {str(e)}")
         raise
 
 if __name__ == "__main__":
     try:
-        output_file = generate_voiceover("./test_script.json")
+        output_file = generate_voiceover("./generated/scripts/generated_script.json")
         print(f"Voiceover generated successfully: {output_file}")
     except Exception as e:
-        logging.error(f"Voiceover generation failed: {str(e)}")
+        print(f"Voiceover generation failed: {str(e)}")
         raise

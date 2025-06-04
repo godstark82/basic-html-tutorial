@@ -2,11 +2,12 @@ import os
 import moviepy.config
 from moviepy.video.fx.resize import resize
 from moviepy.editor import VideoFileClip, AudioFileClip, TextClip, CompositeVideoClip, ImageClip
-from error_handler import handle_errors, logging
 import json
 import moviepy
 from pydub import AudioSegment
 from pydub.utils import mediainfo
+from scripts.helpers.dowload_sample import download_sample_video
+import scripts.config as config
 
 IMAGE_MAGICK_PATH = os.getenv('IMAGEMAGICK_BINARY')
 
@@ -15,9 +16,8 @@ if not IMAGE_MAGICK_PATH:
 
 moviepy.config.IMAGEMAGICK_BINARY = IMAGE_MAGICK_PATH
 
-@handle_errors("VideoGenerator")
+
 def generate_video(
-    background_video: str,
     audio_file: str, 
     script_file: str,
     output_path: str = "final_video.mp4"
@@ -26,19 +26,21 @@ def generate_video(
     Generate a vertical video with background footage, audio, subtitles and character images.
     Returns the path to the generated video.
     """
+    background_video_url = config.YOUTUBE_SETTINGS['background_video_url']
     try:
+        download_sample_video(background_video_url)
+        
         # Load the script
         with open(script_file, 'r') as f:
             script = json.load(f)
         
         # Load video and audio
-        video = VideoFileClip(background_video)
+        video = VideoFileClip('samples/video/video.mp4')
         audio = AudioFileClip(audio_file)
         
         # Load character images and scale them appropriately
-        walter_img = ImageClip("samples/images/walter.png").resize(width=video.w * 0.45).set_position(('left', 'bottom'))
-        jesse_img = ImageClip("samples/images/jesse.png").resize(width=video.w * 0.45).set_position(('right', 'bottom'))
-        
+        character1_img = ImageClip(config.CHARACTERS["character1"]["image_path"]).resize(width=video.w * 0.45).set_position(('left', 'bottom'))
+        character2_img = ImageClip(config.CHARACTERS["character2"]["image_path"]).resize(width=video.w * 0.45).set_position(('right', 'bottom'))
         
         # Crop video to 9:16 aspect ratio (1440x2560 for 1440p)
         w, h = video.size
@@ -58,8 +60,8 @@ def generate_video(
         character_clips = []
         current_time = 0
         
-        # Style for Walter's subtitles
-        walter_style = {
+        # Style for Character1's subtitles
+        character1_style = {
             'font': 'Arial-Bold',
             'fontsize': 85,  # Increased font size for higher resolution
             'color': 'white',
@@ -70,8 +72,8 @@ def generate_video(
             'align': 'center',
         }
         
-        # Style for Jesse's subtitles
-        jesse_style = {
+        # Style for Character2's subtitles
+        character2_style = {
             'font': 'Arial-Bold', 
             'fontsize': 85,  # Increased font size for higher resolution
             'color': 'yellow',
@@ -84,17 +86,17 @@ def generate_video(
         
         # Create subtitle clips and character images for each line
         for line_id, line_data in script.items():
-            if 'walter' in line_data:
-                text = line_data['walter']
-                style = walter_style
-                character = 'walter'
-                char_img = walter_img
+            if config.CHARACTERS["character1"]["name"] in line_data:
+                text = line_data[config.CHARACTERS["character1"]["name"]].replace('*', '').replace('"', '')
+                style = character1_style
+                character = config.CHARACTERS["character1"]["name"]
+                char_img = character1_img
                 position = ('left', 'bottom')  # Left side, at bottom
             else:
-                text = line_data['jesse']
-                style = jesse_style
-                character = 'jesse'
-                char_img = jesse_img
+                text = line_data[config.CHARACTERS["character2"]["name"]].replace('*', '').replace('"', '')
+                style = character2_style
+                character = config.CHARACTERS["character2"]["name"]
+                char_img = character2_img
                 position = ('right', 'bottom')  # Right side, at bottom
                 
             # Get audio duration for timing
@@ -150,24 +152,23 @@ def generate_video(
         video.close()
         audio.close()
         final_video.close()
-        walter_img.close()
-        jesse_img.close()
+        character1_img.close()
+        character2_img.close()
         
-        logging.info(f"Video generated successfully: {output_path}")
+        print(f"Video generated successfully: {output_path}")
         return output_path
         
     except Exception as e:
-        logging.error(f"Video generation failed: {str(e)}")
+        print(f"Video generation failed: {str(e)}")
         raise
 
 if __name__ == "__main__":
     try:
         output_file = generate_video(
-            background_video="samples/video.mp4",
             audio_file="combined_voiceover.mp3",
             script_file="test_script.json"
         )
         print(f"Video generated successfully: {output_file}")
     except Exception as e:
-        logging.error(f"Video generation failed: {str(e)}")
+        print(f"Video generation failed: {str(e)}")
         raise
