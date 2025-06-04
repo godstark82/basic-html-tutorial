@@ -1,7 +1,7 @@
 .venv/
 .env
 __pycache__/
-.mp4
+*.mp4
 generated_script.json
 generated_topic.txt
 client_secrets.json
