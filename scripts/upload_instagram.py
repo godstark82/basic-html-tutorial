@@ -17,28 +17,26 @@ except Exception as e:
     print(f"Gemini client failed: {str(e)}")
     raise
 
-# Credentials (make sure to use environment variables or a secure method in production)
+# Credentials
 USERNAME = "fullstackwalter"
 PASSWORD = "Lk@328001"
+SESSION_FILE = f"{USERNAME}_session.json"
 
-# Path to the video (must be under 90 seconds for Reels)
+# Path to the video
 VIDEO_PATH = "./final_video.mp4"
 
 def generate_caption():
     try:
-        # Read the script file
         with open('./generated/scripts/generated_script.json', 'r') as f:
             script = json.load(f)
-        
-        # Extract dialogue
+
         dialogue = ""
         for line in script.values():
             if 'walter' in line:
                 dialogue += f"Walter: {line['walter']}\n"
             elif 'jesse' in line:
                 dialogue += f"Jesse: {line['jesse']}\n"
-                
-        # Generate caption using Gemini
+
         prompt = f"""
         Based on this Breaking Bad dialogue:
         {dialogue}
@@ -50,27 +48,44 @@ def generate_caption():
         4. Is engaging and shareable
         5. Maximum 300 characters
         """
-        
+
         response = client.models.generate_content(
             model=GEMINI_MODEL,
             contents=prompt
         )
         return response.text
-        
+
     except Exception as e:
         print(f"Error generating caption: {e}")
         return "Breaking Bad Teaching You How To Be A Good Person 🎬 #BreakingBad #WalterWhite #JessePinkman #AI #viral"
 
+def login_with_session(cl: Client):
+    if os.path.exists(SESSION_FILE):
+        try:
+            cl.load_settings(SESSION_FILE)
+            cl.login(USERNAME, PASSWORD)
+            print("✅ Logged in using saved session.")
+        except Exception as e:
+            print("⚠️ Failed to login using saved session. Retrying fresh login...")
+            cl.set_settings({})
+            cl.login(USERNAME, PASSWORD)
+            cl.dump_settings(SESSION_FILE)
+            print("✅ Logged in fresh and saved new session.")
+    else:
+        cl.login(USERNAME, PASSWORD)
+        cl.dump_settings(SESSION_FILE)
+        print("✅ Logged in and saved new session.")
+
 def upload_reel(video_path: str = VIDEO_PATH):
     try:
-        # Generate dynamic caption
+        # Generate caption
         caption = generate_caption()
-        
-        # Initialize client and login
-        cl = Client()
-        cl.login(USERNAME, PASSWORD)
 
-        # Upload Reel (clip)
+        # Instagram Client
+        cl = Client()
+        login_with_session(cl)
+
+        # Upload the Reel
         media = cl.clip_upload(video_path, caption)
 
         print("✅ Reel uploaded successfully!")
